@@ -12,3 +12,4 @@ services:
         value: your-secret-key
       - key: ALLOWED_HOSTS
         value: .render.com, .yourdomain.com
+
