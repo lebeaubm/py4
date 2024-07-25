@@ -43,7 +43,13 @@ def product_list(request):
 
 def product_detail(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
-    return render(request, 'shop/product_detail.html', {'product': product})
+    cart_items = CartItem.objects.filter(user=request.user) if request.user.is_authenticated else []
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    return render(request, 'shop/product_detail.html', {
+        'product': product,
+        'cart_items': cart_items,
+        'total_price': total_price
+    })
 
 @login_required
 def add_to_cart(request, product_id):
@@ -57,13 +63,19 @@ def add_to_cart(request, product_id):
 @login_required
 def view_cart(request):
     cart_items = CartItem.objects.filter(user=request.user)
-    return render(request, 'shop/cart.html', {'cart_items': cart_items})
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    return render(request, 'shop/cart.html', {'cart_items': cart_items, 'total_price': total_price})
 
 @login_required
 def place_order(request):
     cart_items = CartItem.objects.filter(user=request.user)
     for item in cart_items:
+        # Create an order
         Order.objects.create(user=request.user, product=item.product, quantity=item.quantity)
+        # Subtract the ordered quantity from the product's stock
+        item.product.stock -= item.quantity
+        item.product.save()
+        # Remove the item from the cart
         item.delete()
     return redirect('profile')
 
@@ -83,8 +95,11 @@ def register(request):
 @login_required(login_url='register')
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
+    quantity = int(request.POST.get('quantity', 1))
     cart_item, created = CartItem.objects.get_or_create(user=request.user, product=product)
     if not created:
-        cart_item.quantity += 1
-        cart_item.save()
+        cart_item.quantity += quantity
+    else:
+        cart_item.quantity = quantity
+    cart_item.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
