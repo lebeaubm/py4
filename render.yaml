@@ -4,7 +4,7 @@ services:
     env: python
     region: oregon
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn shop_project.wsgi:application
+    startCommand: gunicorn shop_project.shop_project.wsgi:application
     envVars:
       - key: DATABASE_URL
         value: postgres://user:password@hostname:port/dbname
