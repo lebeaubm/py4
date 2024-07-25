@@ -6,7 +6,15 @@
 <body>
     <h1>User Profile</h1>
     <p>Username: {{ user.username }}</p>
+    <h2>Your Cart</h2>
     <p>Items in Cart: {{ cart_items_count }}</p>
+    <ul>
+        {% for item in cart_items %}
+            <li>{{ item.quantity }} of {{ item.product.name }} - ${{ item.product.price }}</li>
+        {% endfor %}
+    </ul>
+    <p>Total Price: ${{ total_price }}</p>
+    <a href="{% url 'cart' %}">View Cart</a>
     <h2>Your Orders</h2>
     <ul>
         {% for order in user.order_set.all %}
@@ -17,5 +25,6 @@
     <a href="{% url 'product_list' %}">Back to Products</a>
 </body>
 </html>
+
 
 

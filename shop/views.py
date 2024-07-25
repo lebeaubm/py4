@@ -26,8 +26,15 @@ def logout_view(request):
 
 @login_required
 def profile(request):
-    cart_items_count = CartItem.objects.filter(user=request.user).count()
-    return render(request, 'shop/profile.html', {'cart_items_count': cart_items_count})
+    cart_items = CartItem.objects.filter(user=request.user)
+    cart_items_count = cart_items.count()
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    return render(request, 'shop/profile.html', {
+        'cart_items': cart_items,
+        'cart_items_count': cart_items_count,
+        'total_price': total_price
+    })
+
 
 def product_list(request):
     products = Product.objects.all()
