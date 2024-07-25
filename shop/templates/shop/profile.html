@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+</head>
+<body>
+    <h1>User Profile</h1>
+    <p>Username: {{ user.username }}</p>
+    <p>Items in Cart: {{ cart_items_count }}</p>
+    <h2>Your Orders</h2>
+    <ul>
+        {% for order in user.order_set.all %}
+            <li>{{ order.quantity }} of {{ order.product.name }} - Ordered on {{ order.ordered_at }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'logout' %}">Logout</a>
+    <a href="{% url 'product_list' %}">Back to Products</a>
+</body>
+</html>
+
+
