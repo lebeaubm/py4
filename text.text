@@ -1,0 +1,14 @@
+start the server (only seems to work in command prompt)
+
+python --version
+python -m venv env
+.\env\Scripts\Activate
+pip install -r requirements.txt
+pip install django
+python -m django --version
+
+
+python manage.py runserver
+
+
+
